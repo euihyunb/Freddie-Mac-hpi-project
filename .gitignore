@@ -1,0 +1,19 @@
+# raw/processed data (Ignore git due to license)
+data/raw/
+data/processed/
+
+# Python related
+__pycache__/
+*.pyc
+.venv/
+venv/
+
+# Jupyter
+.ipynb_checkpoints/
+
+# PyCharm
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
