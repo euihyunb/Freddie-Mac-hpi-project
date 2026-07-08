@@ -61,4 +61,4 @@ methodologies exist and is documented in detail in `notebooks/01_data_exploratio
 Python, pandas, numpy, matplotlib, seaborn, Jupyter
 
 ## Author
-[Your Name] — [LinkedIn / email, optional]
+Euihyun Bae — [LinkedIn: https://www.linkedin.com/in/euihyun-bae/ / euihyunb@gmail.com]
