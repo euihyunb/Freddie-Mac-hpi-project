@@ -24,12 +24,23 @@ house price modeling roles.
 
 ## Projects
 
-| # | Project | Status |
-|---|---------|--------|
-| 1 | Exploratory Data Analysis of Loan Performance | In Progress |
-| 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Planned |
+| # | Project | Status  |
+|---|---------|---------|
+| 1 | Exploratory Data Analysis of Loan Performance | Done    |
+| 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Done    |
 | 3 | Default / Prepayment Prediction Models | Planned |
 | 4 | Model Backtesting & Stress Testing | Planned |
+
+### Project 2: Home Value Trend Index
+
+Built a simplified house-price proxy using Freddie Mac loan-level origination 
+data (implied property value = Original UPB ÷ Original LTV), then benchmarked 
+it against the official FHFA House Price Index (2018–2025). The comparison 
+revealed that a simple average of loan-implied values diverges substantially 
+from the true repeat-sales FHFA HPI throughout the period — driven largely by 
+shifts in loan-purpose composition (e.g., the sharp swing toward purchase 
+loans during the 2022 rate-hike cycle). This highlights why repeat-sales 
+methodologies exist and is documented in detail in `notebooks/01_data_exploration.ipynb`.
 
 ## Repository Structure
 ```├──data/           # raw and processed data (not tracked in git — see Data Source)
