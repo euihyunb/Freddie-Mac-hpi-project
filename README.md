@@ -28,7 +28,7 @@ house price modeling roles.
 |---|---------|---------|
 | 1 | Exploratory Data Analysis of Loan Performance | Done    |
 | 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Done    |
-| 3 | Default / Prepayment Prediction Models | Planned |
+| 3 | Default / Prepayment Prediction Models | Done    |
 | 4 | Model Backtesting & Stress Testing | Planned |
 
 ### Project 2: Home Value Trend Index
@@ -41,6 +41,30 @@ from the true repeat-sales FHFA HPI throughout the period — driven largely by
 shifts in loan-purpose composition (e.g., the sharp swing toward purchase 
 loans during the 2022 rate-hike cycle). This highlights why repeat-sales 
 methodologies exist and is documented in detail in `notebooks/01_data_exploration.ipynb`.
+
+### Project 3: Default Prediction Modeling
+
+Built and compared Logistic Regression and Random Forest models to predict 
+mortgage default (defined as ever reaching 90+ days delinquent) using 
+origination-time loan characteristics, restricting the sample to vintage 
+years (2018–2022) with sufficient performance history to avoid 
+right-censoring bias. Key findings:
+
+- Both models achieved similar performance (ROC-AUC ~0.76–0.77), suggesting 
+  the modeling ceiling is currently driven more by limited feature scope and 
+  sample size than by model complexity.
+- Credit score, interest rate, and DTI together account for over 74% of 
+  feature importance in the Random Forest model, consistent with established 
+  mortgage risk industry knowledge.
+- Precision-recall trade-off analysis across classification thresholds shows 
+  the practical challenge of predicting a rare event (~3.5% base default 
+  rate), and highlights that threshold selection should reflect the relative 
+  business cost of missed defaults vs. false alarms.
+
+Full analysis in `notebooks/02_default_modeling.ipynb`. A future iteration 
+using the full (non-sample) Freddie Mac dataset and additional categorical 
+features (property state, occupancy status, loan purpose) is a natural next 
+step to test whether performance improves with more data and richer features.
 
 ## Repository Structure
 ```├──data/           # raw and processed data (not tracked in git — see Data Source)
