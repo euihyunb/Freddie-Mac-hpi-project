@@ -98,3 +98,29 @@ def build_model_dataset(year):
     df_model = df_orig.merge(default_labels_df, on='loan_sequence_number', how='left')
 
     return  df_model
+
+#03 Prepayment Modeling Notebook
+def get_prepayment_labels(year):
+    df_svcg = load_svcg_data(year)
+
+    max_prepay_flag = df_svcg.groupby('loan_sequence_number')['zero_balance_code'].apply(
+        lambda x: (x == 1).any()
+    )
+
+    prepay_flag = max_prepay_flag.astype(int)
+
+    prepay_labels_df = prepay_flag.reset_index()
+    prepay_labels_df.columns = ['loan_sequence_number', 'prepay_flag']
+
+    return prepay_labels_df
+
+def build_prepayment_dataset(year):
+    df_orig = load_orig_data(year)
+    df_orig = clean_orig_data(df_orig)
+    df_orig['vintage_year'] = year
+
+    prepay_labels_df = get_prepayment_labels(year)
+
+    df_model = df_orig.merge(prepay_labels_df, on='loan_sequence_number', how='left')
+
+    return df_model

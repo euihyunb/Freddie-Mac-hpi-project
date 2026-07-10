@@ -42,29 +42,28 @@ shifts in loan-purpose composition (e.g., the sharp swing toward purchase
 loans during the 2022 rate-hike cycle). This highlights why repeat-sales 
 methodologies exist and is documented in detail in `notebooks/01_data_exploration.ipynb`.
 
-### Project 3: Default Prediction Modeling
+### Project 3: Default & Prepayment Prediction Modeling
 
 Built and compared Logistic Regression and Random Forest models to predict 
-mortgage default (defined as ever reaching 90+ days delinquent) using 
-origination-time loan characteristics, restricting the sample to vintage 
-years (2018–2022) with sufficient performance history to avoid 
-right-censoring bias. Key findings:
+two mortgage outcomes — default (90+ days delinquent) and prepayment 
+(voluntary payoff) — using origination-time loan characteristics, restricted 
+to vintage years (2018–2022) with sufficient performance history.
 
-- Both models achieved similar performance (ROC-AUC ~0.76–0.77), suggesting 
-  the modeling ceiling is currently driven more by limited feature scope and 
-  sample size than by model complexity.
-- Credit score, interest rate, and DTI together account for over 74% of 
-  feature importance in the Random Forest model, consistent with established 
-  mortgage risk industry knowledge.
-- Precision-recall trade-off analysis across classification thresholds shows 
-  the practical challenge of predicting a rare event (~3.5% base default 
-  rate), and highlights that threshold selection should reflect the relative 
-  business cost of missed defaults vs. false alarms.
+- **Default model** (`02_default_modeling.ipynb`): Logistic Regression and 
+  Random Forest performed similarly (ROC-AUC ~0.76), suggesting the modeling 
+  ceiling is driven by limited feature scope rather than model complexity. 
+  Credit score, interest rate, and DTI account for ~75% of feature importance.
+- **Prepayment model** (`03_prepayment_modeling.ipynb`): Random Forest 
+  substantially outperformed Logistic Regression (ROC-AUC 0.747 vs. 0.633), 
+  and interest rate alone accounts for 76% of feature importance — confirming 
+  a strong "lock-in effect" where borrowers with historically low rates have 
+  little incentive to refinance.
 
-Full analysis in `notebooks/02_default_modeling.ipynb`. A future iteration 
-using the full (non-sample) Freddie Mac dataset and additional categorical 
-features (property state, occupancy status, loan purpose) is a natural next 
-step to test whether performance improves with more data and richer features.
+Together, these two models illustrate a meaningful contrast: default risk is 
+primarily explained by static borrower characteristics, while prepayment 
+behavior is driven more by the interest rate environment and its interaction 
+with loan characteristics — a distinction with practical relevance for 
+mortgage risk and prepayment speed modeling.
 
 ## Repository Structure
 ```├──data/           # raw and processed data (not tracked in git — see Data Source)
