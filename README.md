@@ -24,12 +24,13 @@ house price modeling roles.
 
 ## Projects
 
-| # | Project | Status  |
-|---|---------|---------|
-| 1 | Exploratory Data Analysis of Loan Performance | Done    |
-| 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Done    |
-| 3 | Default / Prepayment Prediction Models | Done    |
-| 4 | Model Backtesting & Stress Testing | Planned |
+| # | Project | Status |
+|---|---------|--------|
+| 1 | Exploratory Data Analysis of Loan Performance | Done |
+| 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Done |
+| 3 | Default / Prepayment Prediction Models | Done |
+| 4 | Default Model Improvement | Planned |
+| 5 | Prepayment Rate Sensitivity & Stress Testing | Done |
 
 ### Project 2: Home Value Trend Index
 
@@ -64,6 +65,26 @@ primarily explained by static borrower characteristics, while prepayment
 behavior is driven more by the interest rate environment and its interaction 
 with loan characteristics — a distinction with practical relevance for 
 mortgage risk and prepayment speed modeling.
+
+### Project 5: Prepayment Rate Sensitivity & Stress Testing
+
+Extended the baseline prepayment model by engineering a "rate spread" feature 
+(market rate 24 months post-origination minus original rate), empirically 
+grounded by analyzing when prepayment activity actually peaks in the data. 
+This feature substantially improved prediction (ROC-AUC 0.747 → 0.814) and 
+became the dominant predictor, confirming that refinancing incentive is 
+better captured by the *relative* gap between a loan's rate and prevailing 
+market rates than by the raw origination rate alone.
+
+Using the trained model, simulated interest rate shocks (±2 percentage points) 
+to stress-test prepayment behavior. Results revealed vintage-specific ceiling 
+and floor effects — loans from low-rate periods (2020-2022) are highly 
+sensitive to further rate declines (a -2pp shock nearly triples predicted 
+prepayment probability for 2022 loans), while loans from higher-rate periods 
+(2018) show the opposite pattern. This illustrates the "convexity risk" 
+central to mortgage servicing and MBS investment risk management.
+
+Full analysis in `notebooks/05_prepayment_rate_sensitivity.ipynb`.
 
 ## Repository Structure
 ```├──data/           # raw and processed data (not tracked in git — see Data Source)
