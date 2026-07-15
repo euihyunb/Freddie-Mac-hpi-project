@@ -177,10 +177,6 @@ engineering, and later notebooks build on data/features established earlier.
 - `04_default_model_improvement.ipynb`
 - `05_prepayment_rate_sensitivity.ipynb`
 
-### 1. Clone and set up the environment
-git clone <repo-url>
-cd freddie-mac-mortgage-analytics-portfolio
-pip install -r requirements.txt
 ## Tools Used
 - **Language:** Python
 - **Data manipulation:** pandas, numpy
