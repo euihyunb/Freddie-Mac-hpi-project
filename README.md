@@ -26,11 +26,23 @@ house price modeling roles.
 
 | # | Project | Status |
 |---|---------|--------|
-| 1 | Exploratory Data Analysis of Loan Performance | Done |
-| 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Done |
-| 3 | Default / Prepayment Prediction Models | Done |
-| 4 | Default Model Improvement | Planned |
-| 5 | Prepayment Rate Sensitivity & Stress Testing | Done |
+| 1 | Exploratory Data Analysis of Loan Performance | Done   |
+| 2 | Home Value Trend Index (vs. FHFA HPI benchmark) | Done   |
+| 3 | Default / Prepayment Prediction Models | Done   |
+| 4 | Default Model Improvement | Done   |
+| 5 | Prepayment Rate Sensitivity & Stress Testing | Done   |
+
+### Project 1: Exploratory Data Analysis of Loan Performance
+
+Explored Freddie Mac's Single-Family Loan-Level Dataset (2018–2025 sample 
+vintages), examining credit score distributions, geographic concentration of 
+loan volume, and the distribution of loan-implied property values. Built the 
+core reusable data-loading and cleaning pipeline (`src/data_loader.py`) used 
+throughout the rest of this portfolio, including handling of special missing-
+value codes and construction of the `implied_property_value` metric (Original 
+UPB ÷ Original LTV) used as the starting point for Project 2.
+
+Full analysis in `notebooks/01_data_exploration.ipynb`.
 
 ### Project 2: Home Value Trend Index
 
@@ -66,6 +78,29 @@ behavior is driven more by the interest rate environment and its interaction
 with loan characteristics — a distinction with practical relevance for 
 mortgage risk and prepayment speed modeling.
 
+Full analysis in `notebooks/03_prepayment_modeling.ipynb`.
+
+### Project 4: Default Model Improvement
+
+Tested whether the baseline default model could be meaningfully improved 
+through richer features (categorical variables, macroeconomic indicators) or 
+more realistic validation (time-based backtest). Neither categorical features 
+(ROC-AUC 0.774) nor macroeconomic features — rate spread, state unemployment, 
+and HPI change, all sourced via the FRED API (ROC-AUC 0.772) — meaningfully 
+outperformed the original baseline (0.769), consistent with academic 
+literature suggesting default is dominated by core underwriting variables 
+(credit score, LTV, DTI). A time-based backtest (train 2018-2020, test 
+2021-2022) showed a modest, expected performance decline (ROC-AUC 0.746), 
+reflecting a genuine shift in default rates between the two periods.
+
+This project's negative/marginal results are, in their own way, a meaningful 
+finding: they highlight a real contrast with the prepayment model (Project 5), 
+where a single engineered feature drove a large improvement — illustrating 
+that default and prepayment are fundamentally different prediction problems 
+requiring different modeling strategies.
+
+Full analysis in `notebooks/04_default_model_improvement.ipynb`.
+
 ### Project 5: Prepayment Rate Sensitivity & Stress Testing
 
 Extended the baseline prepayment model by engineering a "rate spread" feature 
@@ -96,13 +131,65 @@ Full analysis in `notebooks/05_prepayment_rate_sensitivity.ipynb`.
 ``` 
 
 ## How to Reproduce
-1. Request access to the Freddie Mac SFLLD sample dataset (link above)
-2. Place downloaded files in `data/raw/sample_YYYY/`
-3. Install dependencies: `pip install -r requirements.txt`
-4. Run notebooks in `notebooks/` in numerical order
 
+### 1. Clone and set up the environment
+
+Clone the repository and install dependencies:
+
+`git clone https://github.com/euihyunb/Freddie-Mac-hpi-project.git`
+`cd freddie-mac-hpi-project`
+`pip install -r requirements.txt`
+
+### 2. Download required data
+
+**Freddie Mac SFLLD (required for all notebooks)**
+- Register and download the Sample Dataset (2018–2025 vintages) from 
+  [Freddie Mac's Clarity Data Intelligence portal](https://claritydownload.fmapps.freddiemac.com/CRT/#/sflld)
+- Place each year's `sample_orig_YYYY` and `sample_svcg_YYYY` files in 
+  `data/raw/sample_YYYY/`
+
+**FHFA House Price Index (required for notebooks 01, 04)**
+- Download the Annual, All-Transactions, National HPI from 
+  [FHFA](https://fhfa.gov/hpi/download/annual/hpi_at_national.xlsx)
+- Place in `data/raw/fhfa/hpi_at_national.xlsx`
+
+**FRED Market Mortgage Rates (required for notebooks 04, 05)**
+- Download the monthly 30-Year Fixed Rate Mortgage Average (MORTGAGE30US) 
+  from [FRED](https://fred.stlouisfed.org/series/MORTGAGE30US)
+- Place in `data/raw/fred/MORTGAGE30US.csv`
+
+**FRED State Unemployment Rates (required for notebook 04)**
+- Obtain a free FRED API key: https://fred.stlouisfed.org/docs/api/api_key.html
+- Create a `.env` file in the project root: `FRED_API_KEY=your_key_here` 
+  (excluded from git via `.gitignore`)
+- Run the data retrieval code in `notebooks/04_default_model_improvement.ipynb` 
+  to fetch and save `data/raw/fred/state_unemployment.csv`
+
+### 3. Run notebooks sequentially
+
+Run the notebooks in order, 01 through 05. Each notebook uses reusable 
+functions from `src/data_loader.py` for data loading, cleaning, and feature 
+engineering, and later notebooks build on data/features established earlier.
+
+- `01_data_exploration.ipynb`
+- `02_default_modeling.ipynb`
+- `03_prepayment_modeling.ipynb`
+- `04_default_model_improvement.ipynb`
+- `05_prepayment_rate_sensitivity.ipynb`
+
+### 1. Clone and set up the environment
+git clone <repo-url>
+cd freddie-mac-mortgage-analytics-portfolio
+pip install -r requirements.txt
 ## Tools Used
-Python, pandas, numpy, matplotlib, seaborn, Jupyter
+- **Language:** Python
+- **Data manipulation:** pandas, numpy
+- **Visualization:** matplotlib
+- **Machine learning:** scikit-learn (Logistic Regression, Random Forest)
+- **File formats:** openpyxl (Excel), requests via fredapi (API)
+- **External data sources:** FRED API (fredapi), FHFA HPI (Excel download)
+- **Environment & secrets management:** python-dotenv (for FRED API key)
+- **Development environment:** Jupyter Notebook (via PyCharm), Git/GitHub
 
 ## Author
 Euihyun Bae — [LinkedIn: https://www.linkedin.com/in/euihyun-bae/ / euihyunb@gmail.com]

@@ -124,3 +124,56 @@ def build_prepayment_dataset(year):
     df_model = df_orig.merge(prepay_labels_df, on='loan_sequence_number', how='left')
 
     return df_model
+
+#04 Default model improvement
+
+def calculate_state_unemployment(df_orig, unemployment_df, months_after_origination=24):
+    df = df_orig.copy()
+
+    df['first_payment_dt'] = pd.to_datetime(df['first_payment_date'], format='%Y%m')
+    df['reference_dt'] = df['first_payment_dt'] + pd.DateOffset(months=months_after_origination)
+    df['reference_year_month'] = df['reference_dt'].dt.strftime('%Y%m').astype(int)
+
+    df = df.merge(
+        unemployment_df[['state', 'year_month', 'unemployment_rate']],
+        left_on=['property_state', 'reference_year_month'],
+        right_on=['state', 'year_month'],
+        how='left'
+    )
+
+    return df
+
+
+def calculate_hpi_change(df_orig, fhfa_df, years_after_origination=2):
+    df = df_orig.copy()
+
+    df['origination_year'] = pd.to_datetime(df['first_payment_date'], format='%Y%m').dt.year
+    df['reference_year'] = df['origination_year'] + years_after_origination
+
+    fhfa_lookup = fhfa_df.set_index('year')['hpi']
+
+    df['hpi_at_origination'] = df['origination_year'].map(fhfa_lookup)
+    df['hpi_at_reference'] = df['reference_year'].map(fhfa_lookup)
+
+    df['hpi_change_pct'] = (df['hpi_at_reference'] - df['hpi_at_origination']) / df['hpi_at_origination'] * 100
+
+    return df
+
+#03 Prepayment_rate_sensitivity Notebook
+def calculate_rate_spread(df_orig, market_rate_df, months_after_origination=24):
+    df = df_orig.copy()
+
+    df['first_payment_dt'] = pd.to_datetime(df['first_payment_date'], format='%Y%m')
+    df['reference_dt'] = df['first_payment_dt'] + pd.DateOffset(months=months_after_origination)
+    df['reference_year_month'] = df['reference_dt'].dt.strftime('%Y%m').astype(int)
+
+    df = df.merge(
+        market_rate_df[['year_month', 'market_rate']],
+        left_on='reference_year_month',
+        right_on='year_month',
+        how='left'
+    )
+
+    df['rate_spread'] = df['market_rate'] - df['original_interest_rate']
+
+    return df
